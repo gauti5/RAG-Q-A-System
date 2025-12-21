@@ -1,23 +1,46 @@
 import logging
-import os
-from datetime import datetime
+import sys, os
+from functools import lru_cache
 
-# 1. Define the directory where logs should stay
-log_dir = os.path.join(os.getcwd(), "logs")
+def setup_logger(log_level:str="INFO")->None:
+    # Create formatter
+    formatter=logging.Formatter(
+        fmt="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s",
+        datefmt="%Y-%m-%s %H:%M:%S",
+    )
+    
+    # Configure root logger
+    root_logger=logging.getLogger()
+    root_logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
+    
+    # Remove existing handlers
+    for handler in root_logger.Handlers[:]:
+        root_logger.removeHandler(handler)
+        
+    console_handler=logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
+    
+    # Reduce noise from third-party libraries
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+    logging.getLogger("openai").setLevel(logging.WARNING)
+    logging.getLogger("qdrant_client").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    
+@lru_cache
+def get_logger(name:str)->logging.Logger:
+    """Get a logger instance for a module.
 
-# 2. Create the 'logs' DIRECTORY if it doesn't exist
-os.makedirs(log_dir, exist_ok=True)
+    Args:
+        name: Logger name (typically __name__)
 
-# 3. Define the specific FILE name
-log_file_name = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
-log_file_path = os.path.join(log_dir, log_file_name)
+    Returns:
+        Configured logger instance
+    """
+    return logging.getLogger(name)
 
-logging.basicConfig(
-    filename=log_file_path,
-    format="[%(asctime)s] %(lineno)d %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
-
-
-if __name__=='__main__':
-    logging.info("This is a test log message!!")
+class Logger_Mixin:
+    """Mixin class to add logging capability to classes."""
+    def logger(self)->logging.Logger:
+        return get_logger(self.__class__.__name__)
