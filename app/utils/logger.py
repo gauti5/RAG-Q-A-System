@@ -42,5 +42,6 @@ def get_logger(name:str)->logging.Logger:
 
 class Logger_Mixin:
     """Mixin class to add logging capability to classes."""
+    @property
     def logger(self)->logging.Logger:
         return get_logger(self.__class__.__name__)
