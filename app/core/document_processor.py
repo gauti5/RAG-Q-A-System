@@ -1,3 +1,5 @@
+"""Document processing module for loading and chunking documents."""
+
 import tempfile
 from pathlib import Path
 from typing import BinaryIO
