@@ -51,5 +51,5 @@ class settings(BaseSettings):
     app_version: str = "0.1.0"
     
 @lru_cache
-def get_setings()->settings:
+def get_settings()->settings:
     return settings

@@ -9,7 +9,7 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.utils.logger import get_logger
-from app.config import get_setings
+from app.config import get_settings
 
 logger=get_logger(__name__)
 
@@ -26,7 +26,7 @@ class DocumentProcessor:
             chunk_size: Size of text chunks (default from settings)
             chunk_overlap: Overlap between chunks (default from settings)
         """
-        settings=get_setings()
+        settings=get_settings()
         self.chunk_size=chunk_size or settings.CHUNK_SIZE,
         self.chunk_overalap=chunk_overlap or settings.CHUNK_OVERLAP,
         
