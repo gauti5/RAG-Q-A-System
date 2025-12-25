@@ -134,8 +134,11 @@ class DocumentProcessor:
         
         return loaders[extension](file_path)
     
+    # Works with APIs
     def load_from_upload(self,file : BinaryIO, filename : str) -> list[Document]:
         
+        # BinaryIO -> excepting the file from API's
+    
         """Load document from uploaded file.
 
         Args:
