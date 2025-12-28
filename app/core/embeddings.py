@@ -9,6 +9,13 @@ from app.config import get_settings
 
 logger=get_logger(__name__)
 
+# LRU stands for Least Recently Used.
+
+'''
+@lru_cache as a "memory boost" for your Python functions. 
+Its a tool that tells your code: "If I ask you the same question twice, don't redo the work—just remember the answer you gave me last time."
+'''
+
 @lru_cache
 def get_embeddings() -> GoogleGenerativeAIEmbeddings:
     """Get cached google genai embeddings instance.
