@@ -196,7 +196,7 @@ class RAGChain:
             logger.error(f"Error processing async query with sources : {e}")
             raise
         
-    async def query_with_evulator(self, question:str, include_sorces : bool = True) -> dict:
+    async def query_with_evulator(self, question:str, include_sources : bool = True) -> dict:
         """Execute async RAG query with RAGAS evaluation.
 
         Args:
@@ -207,6 +207,59 @@ class RAGChain:
             Dictionary with answer, sources, and evaluation scores
         """
         logger.info(f"Processing query with evaluation: {question[:100]}...")
+        
+        try:
+            # Get answer and sources
+            result=await self.aquery_with_sources(question)
+            answer=result['answer']
+            sources=result['sources']
+            # Prepare contexts for evaluation
+            contexts=[source['content'] for source in sources]
+            
+            try:
+                evaluation=self.evaluator.aevaluator(
+                    question=question,
+                    answer=answer,
+                    contexts=contexts,
+                )
+                logger.info(f"Evaluation Completed - "
+                            f"faithfulness={evaluation.get('faithfulness', "N/A")}",
+                            f"Amswer Relevancy={evaluation.get('answer_relevancy', 'N/A')}"
+                )
+            except Exception as e:
+                logger.warning(f"Evaluation Failed : {e}", exc_info=True)
+                evaluation={
+                    'faithfulness': None,
+                    'answer relevancy': None,
+                    'evalutaion_time_ms': None,
+                    'error': str(e)
+                }
+                
+            return {'answer': answer, 'sources': sources, 'evaluation': evaluation}
+        except Exception as e:
+            logger.error(f"Error in query with evaluation: {e}")
+            raise
+        
+        
+    def stream(self, question: str):
+        """Stream RAG response.
+
+        Args:
+            question: User question
+
+        Yields:
+            Response chunks
+        """
+        logger.info(f"Sreaming Query : {question[:100]}")
+        try:
+            for chunk in self.chain.stream(question):
+                yield chunk
+        except Exception as e:
+            logger.error("Error streaming query : {e}")
+            raise
+                
+            
+            
         
         
         
