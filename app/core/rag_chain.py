@@ -13,6 +13,7 @@ from app.utils.logger import get_logger
 from app.core.vector_store import VectoreStoreService
 from app.config import get_settings
 
+
 logger=get_logger(__name__)
 settings=get_settings()
 
@@ -83,7 +84,7 @@ class RAGChain:
     def evaluator(self):
         """Get or create RAGAS evaluator instance."""
         if self._evaluator is None:
-            from app.core.ragas_evaluator import RAGASEvaluator
+            from app.core.rag_evaluator import RAGASEvaluator
             
             self._evaluator=RAGASEvaluator()
             
@@ -196,7 +197,7 @@ class RAGChain:
             logger.error(f"Error processing async query with sources : {e}")
             raise
         
-    async def query_with_evulator(self, question:str, include_sources : bool = True) -> dict:
+    async def query_with_evaluator(self, question:str, include_sources : bool = True) -> dict:
         """Execute async RAG query with RAGAS evaluation.
 
         Args:
