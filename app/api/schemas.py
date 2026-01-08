@@ -45,3 +45,106 @@ class DocumentListResponse(BaseModel):
     status: str=Field(..., description="Collection Status")
     
 # ============== Query Schemas ==============
+
+class QueryRequest(BaseModel):
+    """Request for RAG query."""
+    question: str = Field(
+        ...,
+        description="Question to Ask",
+        min_length=1,
+        max_length=1000,
+    )
+    
+    include_sources: bool=Field(
+        default=True,
+        description="Include Source documents in response",
+    )
+    
+    enable_evaluation: bool=Field(
+        default=False,
+        description="Enable RAGAS Evaluation (faithfulness, answer relevancy)",
+    )
+    
+    model_config={
+        "json_schema_extra":{
+            "examples": [
+                {
+                    question: "what is RAG",
+                    include_sources: True,
+                    enable_evaluation: False,
+                }
+            ]
+        }
+    }
+    
+class SourceDocument(BaseModel):
+    """Source document information."""
+    content: str=Field(..., description="Document Content Information")
+    metadata: dict[str, Any]=Field(...,description="Document Metadata")
+    
+    
+class EvaluationScores(BaseModel):
+    """RAGAS evaluation scores."""
+    faithfulness: float | None =Field(
+        None,
+        description="Faithfulness Score (0-1): measures factual consistency with sources",
+        ge=0.0,
+        le=1.0,
+    )
+    
+    answer_relevancy: float | None=Field(
+        None, 
+        description="Answer Relevancy Score (0-1): measures relevance to question",
+        ge=0.0,
+        le=1.0,
+    )
+    
+    evaluation_time_ms: float | None =Field(
+        None,
+        description="Time taken for evaluation in milliseconds",
+    )
+    
+    error: str | None = Field(
+        None,
+        description="Error message if evaluation Failed",
+    )
+    
+    
+class QueryResponse(BaseModel):
+    
+    question: str =Field(..., description="Original question")
+    answer: str=Field(..., description="Generated answer")
+    sources: list[SourceDocument] | None=Field(
+        None,
+        description="Source document used",
+    )
+    
+    processing_time_ms: float =Field(
+        ...,
+        description="Query processing time in milliseconds",
+    )
+    
+    evaluation: EvaluationScores | None =Field(
+        None, 
+        description="RAGAS Evaluation scores (if requested)",
+    )
+
+
+
+# ============== Error Schemas ==============
+
+
+class ErrorResponse(BaseModel):
+    """Error response."""
+
+    error: str = Field(..., description="Error type")
+    message: str = Field(..., description="Error message")
+    detail: str | None = Field(None, description="Detailed error information")
+
+
+class ValidationErrorResponse(BaseModel):
+    """Validation error response."""
+
+    error: str = Field(default="Validation Error", description="Error type")
+    message: str = Field(..., description="Error message")
+    errors: list[dict] = Field(..., description="Validation errors")
