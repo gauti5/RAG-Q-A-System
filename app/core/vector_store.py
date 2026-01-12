@@ -17,7 +17,7 @@ from app.config import get_settings
 logger=get_logger(__name__)
 settings=get_settings()
 
-EMBEDDING_DIMENSION=1536
+EMBEDDING_DIMENSION=768
 
 @lru_cache
 
@@ -59,23 +59,24 @@ class VectoreStoreService:
         logger.info(f"Vectore store initialized for collection : {self.collection_name}")
         
     def _ensure_collection(self) -> None:
-        """Ensure the collection exists, create if not."""
+        """Force recreate the collection to fix dimension mismatch."""
         try:
-            collection_info=self.client.get_collection(self.collection_name)
-            logger.info(
-                f"collection '{self.collection_name} exists with"
-                f"{collection_info.points_count} points"
-            )
-        except UnexpectedResponse:
-            logger.info(f"Creating collection : {self.collection_name}")
-            self.client.create_collection(
+            # Check if it exists
+            collection_info = self.client.get_collection(self.collection_name)
+            current_dim = collection_info.config.params.vectors.size
+            
+            if current_dim != EMBEDDING_DIMENSION:
+                logger.warning(f"Dim mismatch ({current_dim} vs {EMBEDDING_DIMENSION}). Recreating...")
+                self.client.recreate_collection(
+                    collection_name=self.collection_name,
+                    vectors_config=VectorParams(size=EMBEDDING_DIMENSION, distance=Distance.COSINE)
+                )
+        except Exception:
+            logger.info(f"Creating new collection: {self.collection_name}")
+            self.client.recreate_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(
-                    size=EMBEDDING_DIMENSION,
-                    distance=Distance.COSINE,
-                ),
+                vectors_config=VectorParams(size=EMBEDDING_DIMENSION, distance=Distance.COSINE)
             )
-            logger.info(f"Collection '{self.collection_name}' Created Successfully")
         
     def add_documents(self, documents: list[Document]) -> list[str]:
         

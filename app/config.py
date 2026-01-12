@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-class settings(BaseSettings):
+class Settings(BaseSettings):
     model_config=SettingsConfigDict(
         env_file='.env',
         env_file_encoding='utf-8',
@@ -47,9 +47,9 @@ class settings(BaseSettings):
     ragas_embedding_model: str | None = None  # Defaults to embedding_model if not set
     
     # Application Info
-    app_name: str = "RAG Q&A System"
-    app_version: str = "0.1.0"
+    APP_NAME: str = "RAG Q&A System"
+    APP_VERSION: str = "0.1.0"
     
 @lru_cache
-def get_settings()->settings:
-    return settings
+def get_settings()->Settings:
+    return Settings()

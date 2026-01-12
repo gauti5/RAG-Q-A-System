@@ -30,7 +30,7 @@ class DocumentUploadResponse(BaseModel):
     chunks_created: int=Field(..., description="Number of Chunks Created")
     document_ids: list[str]=Field(..., description="List of Document Ids")
     
-class DocumentInformation(BaseModel):
+class DocumentInfo(BaseModel):
     """Document information."""
     source: str=Field(..., description="Document Source/Filename")
     metadata: dict[str, Any]=Field(

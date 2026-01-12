@@ -14,7 +14,7 @@ def setup_logger(log_level:str="INFO")->None:
     root_logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
     
     # Remove existing handlers
-    for handler in root_logger.Handlers[:]:
+    for handler in root_logger.handlers[:]:
         root_logger.removeHandler(handler)
         
     console_handler=logging.StreamHandler(sys.stdout)

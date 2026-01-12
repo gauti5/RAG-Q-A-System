@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     #Startup
     setup_logger(settings.LOG_LEVEL)
     logger=get_logger(__name__)
-    logger.info(f"Starting {settings.app_name} v{__version__}")
+    logger.info(f"Starting {settings.APP_NAME} v{__version__}")
     logger.info(f"Log Level : {settings.LOG_LEVEL}")
     
     yield
@@ -38,26 +38,27 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI application
 app=FastAPI(
-    title=settings.app_name,
+    title=settings.APP_NAME,
     description="""
-## RAG Q&A System API
+    ## RAG Q&A System API
 
-A Retrieval-Augmented Generation (RAG) question-answering system built with:
-- **FastAPI** for the API layer
-- **LangChain** for RAG orchestration
-- **Qdrant Cloud** for vector storage
-- **OpenAI** for embeddings and LLM
+    A Retrieval-Augmented Generation (RAG) question-answering system built with:
+    - **FastAPI** for the API layer
+    - **LangChain** for RAG orchestration
+    - **Qdrant Cloud** for vector storage
+    - **OpenAI** for embeddings and LLM
 
-### Features
-- Upload PDF, TXT, and CSV documents
-- Ask questions and get AI-powered answers
-- View source documents for transparency
-- Streaming responses for real-time feedback
+    ### Features
+    - Upload PDF, TXT, and CSV documents
+    - Ask questions and get AI-powered answers
+    - View source documents for transparency
+    - Streaming responses for real-time feedback
     """,
     version=__version__,
     docs_url='/docs',
     redoc_url='/redoc',
     openapi_url='/openapi.json',
+    
     lifespan=lifespan,
 )
 
@@ -68,7 +69,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_credentials=True,
     allow_headers=["*"],
-    allow_methods=["*"]
+    allow_methods=["*"],
 )
 app.mount("/static", StaticFiles(directory='static'), name='static')
 
@@ -99,7 +100,7 @@ async def global_exception_handler(request: Request, exc: Exception):
         },
     )
     
-if __name__=='__main__':
+if __name__=="__main__":
     import uvicorn
     
     uvicorn.run(
