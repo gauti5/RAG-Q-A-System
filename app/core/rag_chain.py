@@ -10,7 +10,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.utils.logger import get_logger 
-from app.core.vector_store import VectoreStoreService
+from app.core.vector_store import VectorStoreService
 from app.config import get_settings
 
 
@@ -46,13 +46,13 @@ def format_docs(docs : list[Document]) -> str:
 
 class RAGChain:
     """RAG chain for question answering."""
-    def __init__(self, vctore_store_service : VectoreStoreService | None = None):
+    def __init__(self, vctore_store_service : VectorStoreService | None = None):
         """Initialize RAG chain.
 
         Args:
             vector_store_service: Optional VectorStoreService instance
         """
-        self.vector_store=vctore_store_service or VectoreStoreService()
+        self.vector_store=vctore_store_service or VectorStoreService()
         self.retriever=self.vector_store.get_retriever()
         self.llm=ChatGoogleGenerativeAI(
             model=settings.LLM_MODEL,
@@ -67,7 +67,7 @@ class RAGChain:
         self.chain=(
             {
                 'context': self.retriever | format_docs,
-                'question': RunnablePassthrough[Any](),
+                'question': RunnablePassthrough(),
             }
             | self.prompt
             | self.llm
@@ -193,11 +193,15 @@ class RAGChain:
                 for doc in source_docs
             ]
             logger.info(f"Async query processed with sources : {len(sources)}")
+            return {
+                "answer": answer,
+                "sources": sources,
+            }
         except Exception as e:
             logger.error(f"Error processing async query with sources : {e}")
             raise
         
-    async def query_with_evaluator(self, question:str, include_sources : bool = True) -> dict:
+    async def aquery_with_evaluation(self, question:str, include_sources : bool = True) -> dict:
         """Execute async RAG query with RAGAS evaluation.
 
         Args:

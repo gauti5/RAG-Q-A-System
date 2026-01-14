@@ -37,7 +37,7 @@ async def query(request: QueryRequest)->QueryResponse:
         # Determine which method to call based on request
         if request.enable_evaluation:
             # Evaluation requires sources, so we always include them
-            result= await rag_chain.aquery_with_sources(
+            result= await rag_chain.aquery_with_evaluation(
                 question=request.question,
                 include_sources=request.include_sources,
             )
@@ -83,7 +83,7 @@ async def query(request: QueryRequest)->QueryResponse:
             answer=answer,
             sources=sources,
             processing_time_ms=round(processing_time,2),
-            evaluation=evaluation
+            evaluation=evaluation,
         )
     except Exception as e:
         logger.error("Query processing error : {e}")
@@ -143,9 +143,9 @@ async def search_documents(request: QueryRequest) -> dict:
     logger.info(f"Search receieved : {request.question[:100]}...")
     
     try:
-        from app.core.vector_store import VectoreStoreService
+        from app.core.vector_store import VectorStoreService
         
-        vector_store=VectoreStoreService()
+        vector_store=VectorStoreService()
         results=vector_store.search_with_scores(request.question)
         
         documents=[

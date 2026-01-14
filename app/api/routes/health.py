@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import HTTPException, APIRouter
 from app import __version__
 from app.api.schemas import HealthResponse, ReadinessResponse
-from app.core.vector_store import VectoreStoreService
+from app.core.vector_store import VectorStoreService
 from app.utils.logger import get_logger
 
 logger=get_logger(__name__)
@@ -37,7 +37,7 @@ async def readiness_check()->ReadinessResponse:
     
     logger.debug("Readiness checks requested")
     try:
-        vector_store=VectoreStoreService()
+        vector_store=VectorStoreService()
         is_healthy=vector_store.health_check()
         
         if not is_healthy:

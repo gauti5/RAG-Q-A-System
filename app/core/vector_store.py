@@ -36,7 +36,7 @@ def get_qdrant_client() -> QdrantClient:
     logger.info("Qdrant client connected successfully")
     return client
 
-class VectoreStoreService:
+class VectorStoreService:
     """Initialize vector store service.
 
         Args:
@@ -97,7 +97,7 @@ class VectoreStoreService:
         ids=[str(uuid4()) for _ in documents]
             
         # Add to vector store
-        self.vector_store.add_documents(documents, ids)
+        self.vector_store.add_documents(documents, ids=ids)
         logger.info(f"{len(documents)} documents added successfully")
         return ids
         

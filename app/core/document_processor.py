@@ -27,8 +27,8 @@ class DocumentProcessor:
             chunk_overlap: Overlap between chunks (default from settings)
         """
         settings=get_settings()
-        self.chunk_size=chunk_size or settings.CHUNK_SIZE,
-        self.chunk_overalap=chunk_overlap or settings.CHUNK_OVERLAP,
+        self.chunk_size=chunk_size or settings.CHUNK_SIZE
+        self.chunk_overalap=chunk_overlap or settings.CHUNK_OVERLAP
         
         self.text_splitter=RecursiveCharacterTextSplitter(
             chunk_size=self.chunk_size,
@@ -135,7 +135,7 @@ class DocumentProcessor:
         return loaders[extension](file_path)
     
     # Works with APIs
-    def load_from_upload(self,file : BinaryIO, filename : str) -> list[Document]:
+    def load_from_upload(self,file : BinaryIO, filename : str,) -> list[Document]:
         
         # BinaryIO -> excepting the file from API's
     
@@ -209,7 +209,7 @@ class DocumentProcessor:
         return self.split_documents(documents)
     
     
-    def process_upload(self, file : BinaryIO, filename : str) -> list[Document]:
+    def process_upload(self, file : BinaryIO, filename : str,) -> list[Document]:
         """Load and split an uploaded file.
 
         Args:
