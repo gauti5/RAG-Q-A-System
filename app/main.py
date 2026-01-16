@@ -6,6 +6,7 @@
 
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 from contextlib import asynccontextmanager
@@ -21,6 +22,15 @@ from app.config import get_settings
 from app.api.routes import documents, query, health
 
 settings=get_settings()
+import os
+
+# Get the path of the current file (app/main.py)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Move up one level to the root where 'static' lives
+static_dir = os.path.join(os.path.dirname(BASE_DIR), "static")
+
+# Safety: Create the directory if it's missing so the app doesn't crash
+os.makedirs(static_dir, exist_ok=True)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -71,7 +81,7 @@ app.add_middleware(
     allow_headers=["*"],
     allow_methods=["*"],
 )
-app.mount("/static", StaticFiles(directory='static'), name='static')
+app.mount("/static", StaticFiles(directory=static_dir), name='static')
 
 # Include routers
 app.include_router(query.router)
@@ -82,7 +92,12 @@ app.include_router(health.router)
 @app.get("/", response_class=HTMLResponse, tags=["Root"])
 async def root():
     """Serve the main UI."""
-    with open("static/index.html", "r") as f:
+    index_path = os.path.join(static_dir, "index.html")
+    
+    if not os.path.exists(index_path):
+        return HTMLResponse(f"index.html not found at {index_path}", status_code=404)
+        
+    with open(index_path, "r") as f:
         return f.read()
     
     
