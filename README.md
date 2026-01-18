@@ -6,6 +6,7 @@ A production-ready RAG (Retrieval-Augmented Generation) system that enables inte
 
 # 🌟 Key Highlights
 🚀 Production Ready: Docker 
+
 🧠 Smart AI: Powered by Google Gemini & LangChain
 📊 Observable: LangSmith integration for full tracing
 ✅ Evaluated: RAGAS metrics for answer quality
