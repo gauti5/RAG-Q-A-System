@@ -8,8 +8,13 @@ A production-ready RAG (Retrieval-Augmented Generation) system that enables inte
 🚀 Production Ready: Docker 
 
 🧠 Smart AI: Powered by Google Gemini & LangChain
+
 📊 Observable: LangSmith integration for full tracing
+
 ✅ Evaluated: RAGAS metrics for answer quality
+
 🔒 Secure: Non-root Docker, API validation, error handling
+
 ⚡ Fast: Async operations, streaming responses
+
 📈 Scalable: Cloud-native architecture
