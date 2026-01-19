@@ -12,9 +12,3 @@ A production-ready RAG (Retrieval-Augmented Generation) system that enables inte
 📊 Observable: LangSmith integration for full tracing
 
 ✅ Evaluated: RAGAS metrics for answer quality
-
-🔒 Secure: Non-root Docker, API validation, error handling
-
-⚡ Fast: Async operations, streaming responses
-
-📈 Scalable: Cloud-native architecture
